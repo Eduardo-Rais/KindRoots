@@ -1,0 +1,21 @@
+[gd_scene load_steps=5 format=3 uid="uid://ds4ki76r4xon3"]
+
+[ext_resource type="PackedScene" uid="uid://bl2dicbjyt7ap" path="res://Scenes/collectable.tscn" id="1_ljuld"]
+[ext_resource type="Texture2D" uid="uid://deyny724dbs7e" path="res://Assets/Objects/Spring Crops.png" id="2_fr5rp"]
+[ext_resource type="Resource" uid="uid://dhr0pgmqlecdf" path="res://Resources/vegetable_res.tres" id="2_woto2"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_muo5d"]
+radius = 9.43398
+
+[node name="Collectable" instance=ExtResource("1_ljuld")]
+itemRes = ExtResource("2_woto2")
+
+[node name="CollisionShape2D" parent="." index="0"]
+position = Vector2(-1, 0)
+rotation = -0.731007
+shape = SubResource("CircleShape2D_muo5d")
+
+[node name="Sprite2D" parent="." index="1"]
+position = Vector2(-1, 0)
+texture = ExtResource("2_fr5rp")
+region_rect = Rect2(192, 48, 16, 16)

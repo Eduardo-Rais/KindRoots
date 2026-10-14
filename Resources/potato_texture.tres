@@ -1,0 +1,7 @@
+[gd_resource type="AtlasTexture" load_steps=2 format=3 uid="uid://c31mmtbynhga2"]
+
+[ext_resource type="Texture2D" uid="uid://deyny724dbs7e" path="res://Assets/Objects/Spring Crops.png" id="1_uby0c"]
+
+[resource]
+atlas = ExtResource("1_uby0c")
+region = Rect2(192, 80, 16, 16)

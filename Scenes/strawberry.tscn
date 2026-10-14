@@ -1,0 +1,21 @@
+[gd_scene load_steps=5 format=3 uid="uid://bn7fbcklisgyr"]
+
+[ext_resource type="PackedScene" uid="uid://bl2dicbjyt7ap" path="res://Scenes/collectable.tscn" id="1_gmp5j"]
+[ext_resource type="Resource" uid="uid://b4gkdlxd30awb" path="res://Resources/strawberry_res.tres" id="2_ql20q"]
+[ext_resource type="Texture2D" uid="uid://deyny724dbs7e" path="res://Assets/Objects/Spring Crops.png" id="2_wixp6"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_jcr64"]
+radius = 7.51665
+
+[node name="Strawberry" instance=ExtResource("1_gmp5j")]
+collision_layer = 16
+collision_mask = 16
+itemRes = ExtResource("2_ql20q")
+
+[node name="CollisionShape2D" parent="." index="0"]
+position = Vector2(-0.5, 0.5)
+shape = SubResource("CircleShape2D_jcr64")
+
+[node name="Sprite2D" parent="." index="1"]
+texture = ExtResource("2_wixp6")
+region_rect = Rect2(192, 16, 16, 16)
