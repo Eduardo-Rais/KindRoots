@@ -2,18 +2,18 @@ extends CharacterBody2D
 
 signal staminaChanged
 
-@export var speed := 70
+@export var speed: float = 70.0
 @onready var sprite: AnimatedSprite2D = $Sprite2D
-@export var run_speed = 100
+@export var run_speed: float = 100
 
 @export var inventory: Inventory
 
-@export var max_stamina = 100
+@export var max_stamina:float  = 100.0
 @onready var current_stamina : float = max_stamina
 @onready var min_stamina : int = 0
 
-@export var stamina_drain : float = 20
-@export var stamina_regen : float = 15
+@export var stamina_drain : float = 20.0
+@export var stamina_regen : float = 15.0
 
 var isRunning = false
 
