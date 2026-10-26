@@ -8,18 +8,21 @@ extends Button
 var itemStackGui: ItemStackGui
 var index: int
 
-func insert(isg: ItemStackGui):
+func insert(isg: ItemStackGui) -> bool:
 	itemStackGui = isg
 	background.frame = 1
 	container.add_child(itemStackGui)
 	
 	if !itemStackGui.inventorySlot || inventory.slots[index] == itemStackGui.inventorySlot:
-		return
+		return false
 	
 	inventory.insertSlot(index, itemStackGui.inventorySlot)
+	return true
 
 func takeItem():
 	var item = itemStackGui
+	
+	inventory.removeSlot(itemStackGui.inventorySlot)
 	
 	container.remove_child(itemStackGui)
 	itemStackGui = null
