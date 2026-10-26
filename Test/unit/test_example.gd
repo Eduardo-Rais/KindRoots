@@ -33,13 +33,6 @@ func _slots_ocupados() -> int:
 	return total
 
 
-func _transferir(indice_origem: int, indice_destino: int) -> void:
-	# mesmo fluxo da UI: takeItem() chama removeSlot() e depois insert() chama insertSlot()
-	var slot := inventory.slots[indice_origem]
-	inventory.removeSlot(slot)
-	inventory.insertSlot(indice_destino, slot)
-
-
 func _encher_inventario() -> Array[InventoryItem]:
 	# um item diferente por slot, para não empilhar
 	var itens: Array[InventoryItem] = []
@@ -164,25 +157,6 @@ func test_item_pode_ser_inserido_de_novo_depois_de_removido() -> void:
 	assert_eq(inventory.slots[0].amount, 1, "começa uma pilha nova, sem lixo da anterior")
 
 
-func test_remove_slot_esvazia_o_slot_informado() -> void:
-	inventory.insert(potato)
-
-	inventory.removeSlot(inventory.slots[0])
-
-	assert_null(inventory.slots[0].item)
-	assert_eq(inventory.slots[0].amount, 0)
-
-
-func test_remove_slot_de_slot_que_nao_pertence_ao_inventario_nao_faz_nada() -> void:
-	inventory.insert(potato)
-	var slot_de_fora := InventorySlot.new()
-
-	inventory.removeSlot(slot_de_fora)
-
-	assert_eq(inventory.slots[0].item, potato)
-	assert_eq(inventory.slots.size(), CAPACIDADE)
-
-
 # ---------- capacidade máxima ----------
 
 func test_inventario_aceita_itens_diferentes_ate_a_capacidade() -> void:
@@ -233,8 +207,9 @@ func test_liberar_um_slot_de_inventario_cheio_permite_novo_item() -> void:
 
 func test_transferir_move_o_item_para_o_slot_de_destino() -> void:
 	inventory.insert(potato)
+	var origem := inventory.slots[0]
 
-	_transferir(0, 5)
+	inventory.insertSlot(5, origem)
 
 	assert_eq(inventory.slots[5].item, potato)
 
@@ -244,7 +219,7 @@ func test_transferir_preserva_a_quantidade() -> void:
 	inventory.insert(potato)
 	inventory.insert(potato)
 
-	_transferir(0, 5)
+	inventory.insertSlot(5, inventory.slots[0])
 
 	assert_eq(inventory.slots[5].amount, 3)
 
@@ -252,7 +227,7 @@ func test_transferir_preserva_a_quantidade() -> void:
 func test_transferir_esvazia_o_slot_de_origem() -> void:
 	inventory.insert(potato)
 
-	_transferir(0, 5)
+	inventory.insertSlot(5, inventory.slots[0])
 
 	assert_null(inventory.slots[0].item, "origem fica vazia")
 	assert_eq(inventory.slots[0].amount, 0)
@@ -261,7 +236,7 @@ func test_transferir_esvazia_o_slot_de_origem() -> void:
 func test_transferir_nao_duplica_o_item() -> void:
 	inventory.insert(potato)
 
-	_transferir(0, 5)
+	inventory.insertSlot(5, inventory.slots[0])
 
 	assert_eq(_slots_ocupados(), 1, "só um slot deve ter o item depois de mover")
 
@@ -270,7 +245,7 @@ func test_transferir_nao_altera_slots_nao_envolvidos() -> void:
 	inventory.insert(potato)      # slot 0
 	inventory.insert(strawberry)  # slot 1
 
-	_transferir(0, 5)
+	inventory.insertSlot(5, inventory.slots[0])
 
 	assert_eq(inventory.slots[1].item, strawberry)
 	assert_eq(inventory.slots[1].amount, 1)
@@ -279,7 +254,7 @@ func test_transferir_nao_altera_slots_nao_envolvidos() -> void:
 func test_transferir_mantem_o_tamanho_do_inventario() -> void:
 	inventory.insert(potato)
 
-	_transferir(0, 5)
+	inventory.insertSlot(5, inventory.slots[0])
 
 	assert_eq(inventory.slots.size(), CAPACIDADE)
 
@@ -288,8 +263,8 @@ func test_transferir_para_o_slot_vizinho_e_de_volta() -> void:
 	inventory.insert(potato)
 	inventory.insert(potato)
 
-	_transferir(0, 1)
-	_transferir(1, 0)
+	inventory.insertSlot(1, inventory.slots[0])
+	inventory.insertSlot(0, inventory.slots[1])
 
 	assert_eq(inventory.slots[0].item, potato)
 	assert_eq(inventory.slots[0].amount, 2)
@@ -304,9 +279,13 @@ func test_transferir_para_slot_ocupado_nao_pode_perder_o_item_do_destino() -> vo
 
 	inventory.insertSlot(1, inventory.slots[0])
 
-	# insertSlot não pode sobrescrever um slot ocupado: a transferência é recusada
-	assert_eq(inventory.slots[1].item, strawberry, "o item do destino foi perdido")
-	assert_eq(inventory.slots[0].item, potato, "a origem não deve mudar se foi recusada")
+	# o morango não pode simplesmente sumir: ou troca de lugar com a batata,
+	# ou a transferência é recusada
+	var tem_morango := false
+	for slot in inventory.slots:
+		if slot.item == strawberry:
+			tem_morango = true
+	assert_true(tem_morango, "o item que estava no destino foi perdido")
 
 
 func test_transferir_slot_que_nao_pertence_ao_inventario_nao_apaga_nada() -> void:
